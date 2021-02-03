@@ -1,0 +1,30 @@
+//to be published in GeeksforGeeks
+import java.util.Scanner;
+class Main {
+  public static void main(String args[]) {
+	Scanner sc = new Scanner(System.in);
+	int i, j, n, count;   //initialize variables
+	i = sc.nextInt(); //get first number which is minimum of two inputs
+	j = sc.nextInt(); //get last number which is maximum of two inputs
+	count = 0;        //set the variable to 0
+	for (n = i; n <= j; n++) {
+	 if(GeeksforGeeks(n)> count){ //to avoid duplicate countings
+	   count = GeeksforGeeks(n);  //sets the value to count
+      }
+	}
+	System.out.print(i+" "+j+" "+count); //printing final output
+	} 
+	static int GeeksforGeeks(int n) {
+	  int count = 1;
+	  while (n != 1) {
+		if (n % 2 != 0) {
+		  n = 3 * n + 1;
+		} 
+        else {
+		  n=n/2;
+		}
+		count++; //increment the variable
+		}
+	 return count;
+	}
+}
