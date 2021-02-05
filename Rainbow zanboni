@@ -1,0 +1,109 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class Zamboni {
+    // initialize variable and array with values
+    static char[][] grid;
+    static int[] dx = new int[] { 0, 1, 0, -1 };
+    static int[] dy = new int[] { -1, 0, 1, 0 };
+    static final int NORTH = 0;
+    static final int EAST = 1;
+    static final int SOUTH = 2;
+    static final int WEST = 3;
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(
+            System.in); // creates object to scan user input
+        // scans the user input
+        int numRows = sc.nextInt();
+        int numCols = sc.nextInt();
+        int rowStart = sc.nextInt() - 1;
+        int colStart = sc.nextInt() - 1;
+        long numSteps = sc.nextLong();
+        grid = new char[numRows][numCols];
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                grid[i][j] = '.'; // update grid array
+            }
+        }
+        char curChar = 'A';
+        if (numSteps < 12100) {
+            int curRow = (int)((rowStart) % numRows);
+            int curCol = (int)((colStart) % numCols);
+            int dir = NORTH;
+            for (long i = 1; i <= numSteps; i++) {
+                // assigning temp value under constraints
+                long temp = (i);
+                if (dir == NORTH || dir == SOUTH) {
+                    temp = (i);
+                }
+                for (long steps = 0; steps < temp;
+                     steps++) {
+                    // update array values
+                    grid[curRow][curCol] = curChar;
+                    curRow = (curRow + dy[dir] + numRows)
+                             % numRows;
+                    curCol = (curCol + dx[dir] + numCols)
+                             % numCols;
+                }
+                dir = (dir + 1) % 4;
+                if (curChar == 'Z') {
+                    curChar = 'A';
+                }
+                else {
+                    // increment curChar variable
+                    curChar++;
+                }
+            }
+            // update array with @ character
+            grid[curRow][curCol] = '@';
+        }
+        else {
+            long startIterations
+                = ((numSteps - 12000) / 4) * 4 + 2;
+            long x = (startIterations / 4) * 2 + 2;
+            long y = (startIterations / 4) * 2 + 1;
+            curChar
+                = (char)(((startIterations) % 26) + 'A');
+            int curRow
+                = (int)((rowStart - (y % numRows) + numRows)
+                        % numRows);
+            int curCol = (int)((colStart + x) % numCols);
+            int dir = SOUTH;
+            for (long i = startIterations + 1;
+                 i <= numSteps; i++) {
+                long temp = (i % numCols) + numCols;
+                if (dir == NORTH || dir == SOUTH) {
+                    // if dir is NORTH or SOUTH, assign temp
+                    // value with addition value
+                    temp = (i % numRows) + numRows;
+                }
+                for (long steps = 0; steps < temp;
+                     steps++) {
+                    // update the array
+                    grid[curRow][curCol] = curChar;
+                    curRow = (curRow + dy[dir] + numRows)
+                             % numRows;
+                    curCol = (curCol + dx[dir] + numCols)
+                             % numCols;
+                }
+                dir = (dir + 1) % 4;
+                if (curChar == 'Z') {
+                    curChar = 'A'; // assign curchar to "A"
+                }
+                else {
+                    curChar++; // increment curChar in the
+                               // failure case of "if" block
+                }
+            }
+            grid[curRow][curCol] = '@';
+        }
+        StringBuilder sb = new StringBuilder();
+        // add element to empty string builder and print it.
+        for (int i = 0; i < numRows; i++) {
+            sb.append(grid[i]).append('\n');
+        }
+        System.out.print(sb);
+    }
+}
