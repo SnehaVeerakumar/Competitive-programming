@@ -1,0 +1,53 @@
+import static java.lang.Math.*;
+
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class ZigZag {
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(System.in);
+        int k = sc.nextInt();
+        String shortest
+            = solve(k, new StringBuilder("a"), 'a');
+        if (k > 25) {
+            for (int i = 1; i < 26; i++) {
+                char c = (char)('a' + i);
+                // get the value from solve method by
+                // passing arguments and store in tmp
+                String tmp = solve(
+                    k - i, new StringBuilder("a" + c), c);
+                if (tmp.length() == shortest.length()) {
+                    System.out.println(tmp);
+                    System.exit(0);
+                }
+            }
+        }
+        System.out.println(
+            shortest); // print shortest string for nametag
+    }
+    static String solve(int k, StringBuilder sb, char last)
+    {
+        if (k == 0)
+            return sb
+                .toString(); // convert sb to string value
+        if (abs(last - 'z') > abs(last - 'a')) {
+            int diff = min(k, abs(last - 'z'));
+            char c = (char)(last + diff);
+            // adds element to sb
+            sb.append(c);
+            return solve(k - diff, sb,
+                         c); // assigns value to solve
+                             // method and iterates
+        }
+        else {
+            int diff = min(k, abs(last - 'a'));
+            char c = (char)(last - diff);
+            sb.append(c); // adds element to sb
+            return solve(k - diff, sb,
+                         c); // assigns value to solve
+                             // method and iterates
+        }
+    }
+}
