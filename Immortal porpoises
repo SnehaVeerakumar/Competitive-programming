@@ -1,0 +1,74 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class Main {
+    static long[][] matrix = { { 1, 1 }, { 1, 0 } };
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(
+            System.in); // creates object to scan user input
+        int t = sc.nextInt();
+        for (int a2 = 0; a2 < t; a2++) {
+            System.out.print(sc.nextInt() + " ");
+            long in = sc.nextLong();
+            // update the array elements from exponentiate
+            // method by passing arguments value
+            long[][] mat = exponentiate(matrix, in);
+            System.out.println(
+                mat[0][1]); // print the element in 0th row
+                            // and 1st column
+        }
+    }
+    public static long[][] exponentiate(long[][] matrix,
+                                        long power)
+    {
+        if (power == 0) {
+            long[][] arr = {
+                { 1, 0 }, { 0, 1 }
+            }; // initialize array with elements
+            return arr; // return the array
+        }
+        if (power == 1) {
+            return matrix; // whenever power is 1. matrix
+                           // value is returned
+        }
+        long[][] temp = exponentiate(
+            matrix,
+            power / 2); // assigns matrix and power/2 as
+                        // argumets to exponentiate method
+        return matrixMult(matrixMult(temp, temp),
+                          exponentiate(matrix, power % 2));
+    }
+    static long MOD = 1000000000; // assign the mod value
+    public static long[][] matrixMult(long[][] a,
+                                      long[][] b)
+    {
+        long[][] out
+            = new long[a.length]
+                      [b.length]; // intialize the array
+                                  // with length of a*length
+                                  // of b dimension
+        for (int a2 = 0; a2 < 2; a2++) {
+            for (int b2 = 0; b2 < 2; b2++) {
+                for (int c2 = 0; c2 < 2; c2++) {
+                    out[a2][b2]
+                        += a[a2][c2]
+                           * b[c2][b2]; // update the 2
+                                        // dimensional array
+                                        // elements after
+                                        // multiplication.
+                }
+            }
+        }
+        for (int a2 = 0; a2 < 2; a2++) {
+            for (int b2 = 0; b2 < 2; b2++) {
+                out[a2][b2]
+                    %= MOD; // update the 2 dimensional
+                            // array element with modulo
+                            // divisible value
+            }
+        }
+        return out; // return the 2 dimensional array
+    }
+}
