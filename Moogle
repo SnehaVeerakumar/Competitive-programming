@@ -1,0 +1,80 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class Moogle {
+    static double[][][] dynamicProg;
+    public static void main(String[] args)
+    {
+        Scanner input = new Scanner(
+            System.in); // scans the user input
+        int t = input.nextInt();
+        for (int q = 0; q < t; q++) {
+            int n = input.nextInt();
+            int m = input.nextInt();
+            int[] arr = new int[n]; // array with size n
+            dynamicProg
+                = new double[n][n]
+                            [n]; // 3 dimensional array with
+                                 // n*n*n dimensions
+            for (int a = 0; a < n; a++) {
+                for (int b = 0; b < n; b++) {
+                    for (int c = 0; c < n; c++) {
+                        dynamicProg[a][b][c]
+                            = -1; // initial value of
+                                  // elements is set to -1
+                    }
+                }
+            }
+            // update elements of array with user input
+            for (int a = 0; a < n; a++) {
+                arr[a] = input.nextInt();
+            }
+            // prints the value returned from solve method
+            System.out.println(
+                solve(arr, m - 2, 0, arr.length - 1) / n);
+        }
+    }
+    // gets the value for argument varibles from main method
+    private static double solve(int[] arr, int i, int start,
+                                int end)
+    {
+        if (dynamicProg[i][start][end] != -1) {
+            return dynamicProg[i][start][end];
+        }
+        if (i == 0) {
+            double error = 0.0;
+            for (int k = start; k <= end; k++) {
+                double interpolatedValue
+                    = arr[start]
+                      + (k - start)
+                            * (arr[end] - arr[start] + 0.0)
+                            / (end - start + 0.0);
+                error += Math.abs(
+                    arr[k]
+                    - interpolatedValue); // abs() gives
+                                          // positive value
+                                          // of calculated
+                                          // value
+            }
+            // update 3 dimensional array with error value
+            dynamicProg[i][start][end] = error;
+            return error;
+        }
+        // assigning values to solve method in argument and
+        // returning min value
+        double min = solve(arr, i - 1, start, end);
+        for (int a = start + 1; a <= end - i; a++) {
+            double answer = 0;
+            // adds returned element of solve and answer
+            // value and stores in answer variable
+            answer += solve(arr, 0, start, a);
+            answer += solve(arr, i - 1, a, end);
+            if (answer < min) {
+                min = answer;
+            }
+        }
+        // update array with min value and return min value
+        dynamicProg[i][start][end] = min;
+        return min;
+    }
+}
