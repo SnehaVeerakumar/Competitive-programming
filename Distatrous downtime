@@ -1,0 +1,36 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+public class DisastrousDowntime {
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner input = new Scanner(
+            System.in); // scans the user input
+        int n = input.nextInt();
+        int k = input.nextInt();
+        int[] freqDist = new int[200001]; // creates array
+                                          // of 200001 size
+        // update freqDist array
+        for (int a = 0; a < n; a++) {
+            int d = input.nextInt();
+            int d2 = d + 1;
+            freqDist[d]++;
+            freqDist[d + 1000]--;
+        }
+        // assigning value to maxJobs using freqDist array
+        int jobs = 0;
+        int maxJobs = 0;
+        for (int a = 0; a < freqDist.length; a++) {
+            jobs += freqDist[a];
+            if (jobs > maxJobs) {
+                maxJobs = jobs;
+            }
+        }
+        // calculate final answer and round it off using
+        // ceil()
+        System.out.println(
+            (int)(Math.ceil(((maxJobs + 0.0) / k)
+                            - 0.000000001)
+                  + .2));
+    }
+}
