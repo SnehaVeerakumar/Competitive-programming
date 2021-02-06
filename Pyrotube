@@ -1,0 +1,51 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class Main {
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(
+            System.in); // creates object to scan user input
+        // create array list
+        List<Integer> values = new ArrayList<>();
+        Set<Integer> set = new HashSet<>();
+
+        while (sc.hasNextInt()) {
+            int val = sc.nextInt();
+            if (val == -1)
+                break;
+            values.add(val);
+            set.add(val);
+        }
+        // using StringBuilder create empty string sb
+        StringBuilder sb = new StringBuilder();
+        // from val to values iterate and get the value from
+        // count varible
+        for (int val : values) {
+            int count = 0;
+            for (int i = 0; i < 18; i++) {
+                int tmp = val ^ (1 << i);
+                if (tmp > val && set.contains(tmp)) {
+                    count++; // if above condition
+                             // satisfies, count variable is
+                             // incremented
+                }
+            }
+            for (int i = 0; i < 18; i++) {
+                for (int j = i + 1; j < 18; j++) {
+                    int tmp = val ^ (1 << i);
+                    tmp = tmp ^ (1 << j);
+                    if (tmp > val && set.contains(tmp)) {
+                        count++;
+                    }
+                }
+            }
+            // add elements to the string builder
+            sb.append(val).append(':').append(count).append(
+                '\n');
+        }
+        // prints the final statement
+        System.out.print(sb);
+    }
+}
