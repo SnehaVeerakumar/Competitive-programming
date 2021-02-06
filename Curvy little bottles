@@ -1,0 +1,130 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class LittleBottles {
+    public static void main(String[] args)
+    {
+        Scanner input = new Scanner(System.in);
+        int CASE = 0;
+        // hasNextInt() checks if the user has something to
+        // give input after one input
+        while (input.hasNextInt()) {
+            CASE++; // increment CASE
+            int n = input.nextInt();
+            double[] coefficients
+                = new double[n
+                             + 1]; // array with "double"
+                                   // data type and n+1 size
+            for (int a = 0; a < n + 1; a++) {
+                coefficients[a]
+                    = input.nextDouble(); // fills the array
+                                          // with inputs from
+                                          // user
+            }
+            double[] integral
+                = integratePoly(squarePolyMultiplyPi(
+                    coefficients)); // gets values from
+                                    // integratePoly method
+            double xLow = input.nextDouble();
+            double xHigh = input.nextDouble();
+            double volumeInc = input.nextDouble();
+            double position = xLow;
+            double volume = 0.0;
+            // creates the array list
+            ArrayList<Double> markedVolumes
+                = new ArrayList<Double>();
+            double delta = (xHigh - xLow) / 100000.0;
+            while (position <= xHigh) {
+                // assign values to the variables
+                double lowerBound = position;
+                double upperBound = 1000;
+                while (upperBound - lowerBound
+                       > Math.ulp((upperBound + lowerBound)
+                                  / 2)
+                             * 100) {
+                    double test
+                        = (lowerBound + upperBound) / 2;
+                    double bottom
+                        = evaluatePoly(integral, position);
+                    double top
+                        = evaluatePoly(integral, test);
+                    double vol = top - bottom;
+                    if (vol > volumeInc) {
+                        upperBound = test;
+                    }
+                    else {
+                        lowerBound = test;
+                    }
+                }
+                volume += volumeInc; // same as volume =
+                                     // volume + volumeInc
+                position = (upperBound + lowerBound) / 2;
+                // add elements to the arraylist
+                if (position <= xHigh)
+                    markedVolumes.add(position);
+            }
+            double totalVolume
+                = evaluatePoly(integral, xHigh)
+                  - evaluatePoly(integral, xLow);
+            // print the final statement in specified format
+            System.out.println(
+                "Case " + CASE + ": "
+                + String.format("%.2f", totalVolume));
+            if (markedVolumes.size() == 0) {
+                System.out.println("insufficient volume");
+            }
+            else {
+                for (int a = 0;
+                     a < Math.min(8, markedVolumes.size());
+                     a++) {
+                    System.out.print(String.format(
+                        "%.2f",
+                        markedVolumes.get(a) - xLow));
+                    if (a
+                        != Math.min(8, markedVolumes.size())
+                               - 1) {
+                        System.out.print(" ");
+                    }
+                }
+                System.out.println();
+            }
+        }
+    }
+    // returns array with data type; double for following
+    // three methods after necessary operations
+    public static double[] squarePolyMultiplyPi(
+        double[] coefficients)
+    {
+        double[] out
+            = new double[coefficients.length * 2 - 1];
+        for (int a = 0; a < coefficients.length; a++) {
+            for (int b = 0; b < coefficients.length; b++) {
+                out[a + b] += coefficients[a]
+                              * coefficients[b] * Math.PI;
+            }
+        }
+        return out;
+    }
+
+    public static double[] integratePoly(
+        double[] coefficients)
+    {
+        double[] newPoly
+            = new double[coefficients.length + 1];
+        for (int a = 1; a <= coefficients.length; a++) {
+            newPoly[a] = coefficients[a - 1] / a;
+        }
+        return newPoly;
+    }
+
+    public static double evaluatePoly(double[] coefficients,
+                                      double x)
+    {
+        double out = 0;
+        for (int a = 0; a < coefficients.length; a++) {
+            out += coefficients[a] * Math.pow(x, a);
+        }
+      //return out array
+        return out;
+    }
+}
