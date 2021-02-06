@@ -5,8 +5,7 @@ public class Main {
     // main method
     public static void main(String[] args)
     {
-        Scanner sc = new Scanner(
-            System.in); // creates object to scan user input
+        Scanner sc = new Scanner(System.in); // creates object to scan user input
         // create array list
         List<Integer> values = new ArrayList<>();
         Set<Integer> set = new HashSet<>();
