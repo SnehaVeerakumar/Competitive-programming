@@ -1,0 +1,157 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+public class Keyboarding {
+    static int n;
+    static int m;
+    static int[][] directions
+        = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    // main method
+    public static void main(String[] args)
+    {
+        Scanner input = new Scanner(System.in);
+        n = input.nextInt();
+        m = input.nextInt();
+        char[][] arr = new char[n][m]; // Character array
+                                       // with n*m dimension
+        for (int a = 0; a < n; a++) {
+            arr[a] = input.next()
+                         .toCharArray(); // update the array
+                                         // with user input
+        }
+        String goal = input.next() + '*';
+        int[][] keyboardGraph = new int[n * m][4];
+        for (int a = 0; a < n; a++) {
+            for (int b = 0; b < m; b++) {
+                int id = hash(a, b);
+                // fill the keyBoardGraph array
+                Arrays.fill(keyboardGraph[id], -1);
+                char current = arr[a][b];
+            label: // a label to refer later in the code
+                for (int c = 0; c < directions.length;
+                     c++) {
+                    int copyA = a; // assign a to copyA
+                    int copyB = b; // assign b to copyB
+                    while (current == arr[copyA][copyB]) {
+                        copyA += directions[c][0];
+                        copyB += directions[c][1];
+                        if (!inBounds(copyA, copyB)) {
+                            continue label; // continue
+                                            // iterating
+                                            // label
+                        }
+                    }
+                    keyboardGraph[id][c] = (hash(
+                        copyA, copyB)); // update the array
+                }
+            }
+        }
+        int[][][] lengths
+            = new int[n][m]
+                     [goal.length()]; // creating three
+                                      // dimensional array
+                                      // with n*m*length of
+                                      // goal dimension
+        // set initial values of array as -1
+        for (int a = 0; a < n; a++) {
+            for (int b = 0; b < m; b++) {
+                for (int c = 0; c < goal.length(); c++) {
+                    lengths[a][b][c] = -1;
+                }
+            }
+        }
+        int[] bfsQueue
+            = new int[n * m * goal.length() + 100];
+        int currentInsertLoc = 0;
+        int currentPullLoc = 0;
+        bfsQueue[currentInsertLoc] = hash(0, 0, 0);
+        currentInsertLoc++;
+        lengths[0][0][0] = 0;
+        // whenever currentInsertLoc is not equal to
+        // currentPullLoc, run through the loop
+        while (currentInsertLoc != currentPullLoc) {
+            int itemp = bfsQueue[currentPullLoc];
+            currentPullLoc++;
+            int xyhash = itemp % 10000;
+            int x = xyhash / m;
+            int y = xyhash % m;
+            int layer = itemp / 10000;
+            if (arr[x][y] == '*'
+                && layer == goal.length()) {
+                break; // stop the loop if above condition
+                       // satisfies
+            }
+            //	from i to the (xyhash)th element in keyBoard
+            //array, iterate the loop
+            for (int i : keyboardGraph[xyhash]) {
+                if (i != -1) {
+                    int x2 = i / m;
+                    int y2 = i % m;
+                    if (lengths[x2][y2][layer] == -1) {
+                        lengths[x2][y2][layer]
+                            = lengths[x][y][layer]
+                              + 1; // update the array
+                        bfsQueue[currentInsertLoc]
+                            = (i + layer * 10000);
+                        currentInsertLoc++; // increment the
+                                            // variable
+                    }
+                }
+            }
+            if (layer < goal.length() - 1
+                && arr[x][y] == goal.charAt(layer)) {
+                if (lengths[x][y][layer + 1] == -1) {
+                    // if above condition satisfies,lengths
+                    // array is updated and currentInsertLoc
+                    // is incremented
+                    lengths[x][y][layer + 1]
+                        = lengths[x][y][layer] + 1;
+                    bfsQueue[currentInsertLoc]
+                        = xyhash + (layer + 1) * 10000;
+                    currentInsertLoc++;
+                }
+            }
+        }
+        int min = Integer.MAX_VALUE;
+        for (int a = 0; a < n; a++) {
+            for (int b = 0; b < m; b++) {
+                if (arr[a][b] == '*') {
+                    if (min > lengths[a][b]
+                                     [goal.length() - 1]
+                        && lengths[a][b][goal.length() - 1]
+                               != -1) {
+                        min = lengths
+                            [a][b]
+                            [goal.length()
+                             - 1]; // assign the array value
+                                   // of specified index to
+                                   // min variable
+                    }
+                }
+            }
+        }
+        System.out.println(
+            (min
+             + 1)); // print the minimal number of strokes
+    }
+
+    private static boolean inBounds(int copyA, int copyB)
+    {
+        return copyA >= 0 && copyA < n && copyB >= 0
+            && copyB < m; // returns true if "and" value
+                          // gives true
+    }
+
+    public static int hash(int x, int y, int layer)
+    {
+        return layer * 10000
+            + hash(x, y); // returns the value for hash
+                          // method with three arguments
+    }
+
+    public static int hash(int x, int y)
+    {
+        return x * m + y; // returns the value for hash
+                          // method with two arguments
+    }
+}
