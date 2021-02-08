@@ -1,0 +1,139 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+public class CuckooHashing {
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
+        // number of total test cases
+        int numCases = sc.nextInt();
+        for (int q = 0; q < numCases; q++) {
+            int numWords = sc.nextInt();
+            int n = sc.nextInt();
+            // value returned from HopcroftKarp method
+            HopcroftKarp bm = new HopcroftKarp(numWords, n);
+            for (int i = 0; i < numWords; i++) {
+                int a = sc.nextInt();
+                int b = sc.nextInt();
+                // reminder of variable divided by n is
+                // stored in variable
+                a = a % n;
+                b = b % n;
+                // add the edges of graph
+                bm.addEdge(i, a);
+                bm.addEdge(i, b);
+            }
+            // compare the value and print final statement
+            // accodingly
+            int matching = bm.findMaxMatching();
+            if (matching == numWords) {
+                System.out.println("successful hashing");
+            }
+            else {
+                System.out.println("rehash necessary");
+            }
+        }
+    }
+    public static class HopcroftKarp {
+        int n1, n2;
+        int edges = 0;
+        int[] last;
+        List<Integer> prev;
+        List<Integer> head;
+        int[] matching;
+        int[] dist;
+        int[] Q;
+        boolean[] used;
+        boolean[] vis;
+        // HopcroftKarp method to return arraylist
+        HopcroftKarp(int n1, int n2)
+        {
+            this.n1 = n1;
+            this.n2 = n2;
+            last = new int[n1]; // array with size n1
+            // creation of arraylist
+            prev = new ArrayList<>();
+            head = new ArrayList<>();
+            matching = new int[n2];
+            dist = new int[n1];
+            Q = new int[n1];
+            used = new boolean[n1];
+            vis = new boolean[n1];
+            // update the values of arraylist
+            Arrays.fill(last, -1);
+        }
+        // adding edges to the graph
+        void addEdge(int u, int v)
+        {
+            head.add(v);
+            prev.add(last[u]);
+            last[u] = edges++;
+        }
+        // bfs method to implement breadth first search
+        void bfs()
+        {
+            Arrays.fill(dist, -1);
+            int sizeQ = 0;
+            for (int u = 0; u < n1; u++) {
+                if (!used[u]) {
+                    Q[sizeQ++] = u;
+                    dist[u] = 0;
+                }
+            }
+            for (int i = 0; i < sizeQ; i++) {
+                int u1 = Q[i];
+                for (int e = last[u1]; e >= 0;
+                     e = prev.get(e)) {
+                    int u2 = matching[head.get(e)];
+                    if (u2 >= 0 && dist[u2] < 0) {
+                        dist[u2] = dist[u1] + 1;
+                        Q[sizeQ++] = u2;
+                    }
+                }
+            }
+        }
+        // depth first search to return boolean value under
+        // certain constraints
+        boolean dfs(int u1)
+        {
+            vis[u1] = true;
+            for (int e = last[u1]; e >= 0;
+                 e = prev.get(e)) {
+                int v = head.get(e);
+                int u2 = matching[v];
+                if (u2 < 0
+                    || !vis[u2] && dist[u2] == dist[u1] + 1
+                           && dfs(u2)) {
+                    matching[v] = u1;
+                    used[u1] = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+        // method to return numMatchs value which is
+        // compared with matching value
+        int findMaxMatching()
+        {
+            Arrays.fill(matching, -1);
+            int numMatches = 0;
+            int f;
+            do {
+                bfs();
+                // adding elements to the array
+                Arrays.fill(vis, false);
+                f = 0;
+                for (int u = 0; u < n1; u++) {
+                    if (!used[u] && dfs(u)) {
+                        f++; // increment f
+                    }
+                }
+                numMatches += f; // update numMatched value
+            } while (f > 0);
+            return numMatches; // return numMatches
+                               // vaariable to
+                               // findMaxMatching method
+        }
+    }
+}
