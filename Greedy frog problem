@@ -1,0 +1,35 @@
+import java.io.IOException;
+import java.util.*;
+public class Main {
+  public static int t_Cases;
+	public static int Rocks_num, Dist;
+	public static String[] Line;
+	public static Vector<Integer> V;
+	public static void main(String args[]) throws NumberFormatException, IOException{
+		Scanner Input = new Scanner(System.in);
+		int Cases = 1;
+		t_Cases = Input.nextInt();
+		while(t_Cases-- > 0){ //loop for various test cases
+			Rocks_num = Input.nextInt(); //get the number of rocks from user
+			Dist  = Input.nextInt(); 
+			V = new Vector<Integer>();
+			V.add(0);	
+			V.add(0);
+			for(int i = 0; i < Rocks_num; i++){ //iterating through the rock lines 
+				Line = Input.next().split("-", -1);
+				int D = Integer.parseInt(Line[1]);
+				V.add(D);
+				if(Line[0].equals("B")) //checks if first letter is B
+					V.add(D);
+			}
+			V.add(Dist);	
+			V.add(Dist);
+			int Result = -10000000; 
+			for(int i = 2; i < V.size(); i++){ //iterate using size of the vector
+				Result = Math.max(Result, V.get(i) - V.get(i - 2));
+			}
+			System.out.printf("Case %d: %d\n", Cases++, Result); //prints the final statement
+			
+		}
+	}
+}
